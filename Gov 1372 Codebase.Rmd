@@ -36,26 +36,13 @@ props <- props |>
     abortion_diff = abortion_yes - abortion_no,
     weed_diff     = weed_yes - weed_no,
     abortion_weed_diff = abortion_diff - weed_diff,
+    
+    weed_total = weed_yes + weed_no,
+    abortion_total = abortion_yes + abortion_no,
+    dif_turnout = abortion_total - weed_total,
 
-    abortion_margin = (abortion_diff / `Ballots Counted`) * 100,
-    weed_margin     = (weed_diff     / `Ballots Counted`) * 100,
-    diff_margin     = (abortion_weed_diff / `Ballots Counted`) * 100
-  )
-```
-
-```{r}
-props <- props |>
-  mutate(
-    across(c("abortion_yes", "abortion_no", "weed_yes", "weed_no",
-             "Official Voter Turnout", "Ballots Counted"),
-           ~ as.numeric(gsub("[,%]", "", .x))),
-
-    abortion_diff = abortion_yes - abortion_no,
-    weed_diff     = weed_yes - weed_no,
-    abortion_weed_diff = abortion_diff - weed_diff,
-
-    abortion_margin = (abortion_diff / `Ballots Counted`) * 100,
-    weed_margin     = (weed_diff     / `Ballots Counted`) * 100,
+    abortion_margin = (abortion_diff / abortion_total) * 100,
+    weed_margin     = (weed_diff     / weed_total) * 100,
     diff_margin     = (abortion_weed_diff / `Ballots Counted`) * 100,
 
     across(c(abortion_margin, weed_margin, diff_margin),
@@ -240,6 +227,7 @@ unmatched_props <- props_clean |>
 write.csv(unmatched_map,   "unmatched_map.csv",   row.names = FALSE)
 write.csv(unmatched_props, "unmatched_props.csv", row.names = FALSE)
 ```
+
 
 ```{r}
 ggplot(ohio_joined) +
